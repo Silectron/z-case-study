@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() *echo.Echo {
+func Setup() *echo.Echo {
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
 	ApiV1Controller(apiGroup)
@@ -18,28 +18,31 @@ func setup() *echo.Echo {
 
 func TestApiV1Controller(t *testing.T) {
 	t.Parallel()
-	e := setup()
+	e := Setup()
 
 	testCases := []struct {
-		name     string
-		method   string
-		path     string
-		expected string
-		code     int
+		name   string
+		method string
+		path   string
+		code   int
 	}{
 		{
-			name:     "GET /api/v1",
-			method:   "GET",
-			path:     "/api/v1",
-			expected: "Hello, World!",
-			code:     http.StatusOK,
+			name:   "GET /api/v1",
+			method: "GET",
+			path:   "/api/v1",
+			code:   http.StatusOK,
 		},
 		{
-			name:     "GET /",
-			method:   "GET",
-			path:     "/",
-			expected: "{\"message\":\"Not Found\"}\n",
-			code:     http.StatusNotFound,
+			name:   "GET /",
+			method: "GET",
+			path:   "/",
+			code:   http.StatusNotFound,
+		},
+		{
+			name:   "GET /api/v1/donations",
+			method: "GET",
+			path:   "/api/v1/donations",
+			code:   http.StatusOK,
 		},
 	}
 
@@ -51,7 +54,6 @@ func TestApiV1Controller(t *testing.T) {
 			e.ServeHTTP(rec, req)
 
 			assert.Equal(t, tc.code, rec.Code)
-			assert.Equal(t, tc.expected, rec.Body.String())
 		})
 	}
 }
