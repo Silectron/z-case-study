@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Setup() *echo.Echo {
+func setup() *echo.Echo {
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")
 	ApiV1Controller(apiGroup)
@@ -18,7 +18,7 @@ func Setup() *echo.Echo {
 
 func TestApiV1Controller(t *testing.T) {
 	t.Parallel()
-	e := Setup()
+	e := setup()
 
 	testCases := []struct {
 		name   string
