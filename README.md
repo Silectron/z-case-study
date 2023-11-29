@@ -16,6 +16,8 @@ OU
 
 `cd backend && go build && ./zbackend`
 
+root api: localhost:1323/api/v1
+
 ## Frontend
 
 NextJS 14
@@ -27,6 +29,8 @@ yarn 1.22.21 (sinon npm)
 ### Étapes
 
 `cd zfrontend && yarn build && yarn start`
+
+servi sur: localhost:3000
 
 ## Suggestions
 
