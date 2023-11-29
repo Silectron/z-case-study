@@ -28,7 +28,7 @@ yarn 1.22.21 (sinon npm)
 
 ### Étapes
 
-`cd zfrontend && yarn build && yarn start`
+`cd zfrontend && yarn install && yarn build && yarn start`
 
 servi sur: localhost:3000
 
