@@ -41,7 +41,10 @@ describe("Test Donation Table Page", () => {
                 const body = interception.response?.body;
                 cy.get("tbody").should("be.visible");
                 cy.get("tbody").should("not.be.empty");
-                cy.get("tr").should("have.length", body.length + 2);
+                cy.get("tr").should(
+                    "have.length",
+                    Math.min(body.length, 10) + 2
+                );
             });
         });
     });
