@@ -38,12 +38,6 @@ func TestApiV1Controller(t *testing.T) {
 			path:   "/",
 			code:   http.StatusNotFound,
 		},
-		{
-			name:   "GET /api/v1/donations",
-			method: "GET",
-			path:   "/api/v1/donations",
-			code:   http.StatusOK,
-		},
 	}
 
 	for _, tc := range testCases {

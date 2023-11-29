@@ -31,10 +31,22 @@ func GetDonations() ([]models.TransactionWithDonationObject, error) {
 	}
 
 	var donations []models.TransactionWithDonationObject
-	err = json.Unmarshal(bytes, &donations)
-	if err != nil {
+	if err = json.Unmarshal(bytes, &donations); err != nil {
 		return nil, err
 	}
 
 	return donations, nil
+}
+
+func GetDonationsPaginated(limit int, offset int) []models.TransactionWithDonationObject {
+	donations, err := GetDonations()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	startIndex := offset
+	endIndex := min(offset+limit, len(donations))
+
+	// slice donations
+	return donations[startIndex:endIndex]
 }

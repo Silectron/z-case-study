@@ -16,6 +16,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.Use(middlewares.Cors)
+	e.Use(middlewares.Validation)
 
 	apiGroup := e.Group("/api/v1")
 	controllers.ApiV1Controller(apiGroup)
