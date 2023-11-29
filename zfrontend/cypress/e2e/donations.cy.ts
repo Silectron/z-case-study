@@ -32,9 +32,9 @@ describe("Test Donation Table Page", () => {
         specify("after loading", () => {
             cy.intercept("GET", "http://localhost:1323/api/v1/donations", {
                 fixture: "100-donations.json",
-            }).as("getDonations");
+            }).as("TransactionWithDonation.getAll");
 
-            cy.wait("@getDonations").then((interception) => {
+            cy.wait("@TransactionWithDonation.getAll").then((interception) => {
                 assert.isNotNull(interception.response?.body);
                 cy.log(interception.response?.body);
 

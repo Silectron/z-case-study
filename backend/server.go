@@ -8,6 +8,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// ZBackend API.
+// This is a sample server for ZBackend API.
+// @version v1
+// @host localhost:1323
+// @BasePath /api/v1
 func main() {
 	e := echo.New()
 

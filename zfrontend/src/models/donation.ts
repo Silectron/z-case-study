@@ -14,6 +14,7 @@ export class Donation {
     ) {}
 }
 
+// TransactionWithDonation class est utilisé comme modèle et pour récupérer les donations
 export class TransactionWithDonation {
     constructor(
         public id: string,

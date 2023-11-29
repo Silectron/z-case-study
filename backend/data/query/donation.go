@@ -30,12 +30,7 @@ func GetDonations() ([]models.TransactionWithDonationObject, error) {
 		return nil, err
 	}
 
-	var donations []models.TransactionWithDonationObject
-	if err = json.Unmarshal(bytes, &donations); err != nil {
-		return nil, err
-	}
-
-	return donations, nil
+	return parseDonations(bytes)
 }
 
 func GetDonationsPaginated(limit int, offset int) []models.TransactionWithDonationObject {
@@ -44,7 +39,20 @@ func GetDonationsPaginated(limit int, offset int) []models.TransactionWithDonati
 		log.Fatal(err)
 	}
 
-	startIndex := offset
+	return sliceDonationsPaginated(donations, limit, offset)
+}
+
+func parseDonations(bytes []byte) ([]models.TransactionWithDonationObject, error) {
+	var donations []models.TransactionWithDonationObject
+	if err := json.Unmarshal(bytes, &donations); err != nil {
+		return nil, err
+	}
+
+	return donations, nil
+}
+
+func sliceDonationsPaginated(donations []models.TransactionWithDonationObject, limit int, offset int) []models.TransactionWithDonationObject {
+	startIndex := max(offset, 0)
 	endIndex := min(offset+limit, len(donations))
 
 	// slice donations

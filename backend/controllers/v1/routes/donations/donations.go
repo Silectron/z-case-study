@@ -12,6 +12,7 @@ type PaginationQueryParams struct {
 	Offset int `query:"offset" validate:"min=0,max=100"`
 }
 
+// GetAll returns all donations or a paginated list of donations.
 func GetAll(c echo.Context) error {
 	var queryParams PaginationQueryParams
 	if err := c.Bind(&queryParams); err != nil {

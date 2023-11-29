@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Enregistre les routes de l'API v1
 func ApiV1Controller(g *echo.Group) {
 	g.GET("", routes.Root)
 
