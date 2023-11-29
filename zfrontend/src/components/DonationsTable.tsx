@@ -2,6 +2,21 @@
 
 import { getDonations } from "@/api/donation";
 import { useState, useEffect } from "react";
+import {
+    Table,
+    TableHeader,
+    TableBody,
+    TableColumn,
+    TableRow,
+    TableCell,
+} from "@nextui-org/react";
+
+const columns = [
+    { key: "createdAtUtc", label: "Date" },
+    { key: "firstName", label: "First Name" },
+    { key: "lastName", label: "Last Name" },
+    { key: "amount", label: "Amount" },
+];
 
 export default function DonationsTable() {
     const [donations, setDonations] = useState<TransactionWithDonationObject[]>(
@@ -19,33 +34,30 @@ export default function DonationsTable() {
     }, []);
 
     return (
-        <table className="table-auto">
-            <thead>
-                <tr>
-                    <th className="px-4 py-2">Date</th>
-                    <th className="px-4 py-2">First Name</th>
-                    <th className="px-4 py-2">Last Name</th>
-                    <th className="px-4 py-2">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {donations.map((transaction) => (
-                    <tr key={transaction.id}>
-                        <td className="border px-4 py-2">
-                            {transaction.donation.createdAtUtc}
-                        </td>
-                        <td className="border px-4 py-2">
-                            {transaction.donation.firstName}
-                        </td>
-                        <td className="border px-4 py-2">
-                            {transaction.donation.lastName}
-                        </td>
-                        <td className="border px-4 py-2">
-                            {transaction.donation.amount}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <Table aria-label="donation table">
+            <TableHeader columns={columns}>
+                {(column) => (
+                    <TableColumn key={column.key}>{column.label}</TableColumn>
+                )}
+            </TableHeader>
+            <TableBody items={donations} emptyContent={"No rows to display."}>
+                {(item) => (
+                    <TableRow key={item.id} className="text-black">
+                        <TableCell>
+                            {new Date(
+                                item.donation.createdAtUtc
+                            ).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{item.donation.firstName}</TableCell>
+                        <TableCell>{item.donation.lastName}</TableCell>
+                        <TableCell>
+                            {(
+                                item.donation.amount - item.refundedAmount
+                            ).toLocaleString()}
+                        </TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        </Table>
     );
 }
