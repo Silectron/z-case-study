@@ -12,7 +12,7 @@ type DonationObject struct {
 	Id              *string `json:"id"`
 	FirstName       *string `json:"firstName"`
 	LastName        *string `json:"lastName"`
-	CreatedAtUtc    *int    `json:"createdAtUtc"`
+	CreatedAtUtc    int     `json:"createdAtUtc"`
 	Amount          *int    `json:"amount"`
 	ThankYouComment *string `json:"thankYouComment"`
 	IsAnonymous     *bool   `json:"isAnonymous"`

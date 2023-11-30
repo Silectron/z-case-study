@@ -1,6 +1,6 @@
 "use client";
 
-import { NextUIProvider, Pagination } from "@nextui-org/react";
+import { Button, NextUIProvider, Pagination } from "@nextui-org/react";
 import { useState, useEffect, useMemo } from "react";
 import {
     Table,
@@ -10,8 +10,9 @@ import {
     TableRow,
     TableCell,
 } from "@nextui-org/react";
-import { TransactionWithDonation } from "@/models/donation";
+import { TransactionWithDonation, getAllPaginated } from "@/models/donation";
 import { getFormattedDate } from "@/utils/date";
+import { set } from "cypress/types/lodash";
 
 const columns = [
     { key: "createdAtUtc", label: "Date" },
@@ -22,6 +23,9 @@ const columns = [
 
 export default function DonationsTable() {
     const [donations, setDonations] = useState<TransactionWithDonation[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [hasNext, setHasNext] = useState(false);
+    const initialPage = 1;
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
     const rowsPerPage = 10;
@@ -33,31 +37,45 @@ export default function DonationsTable() {
     }, [page, donations]);
 
     useEffect(() => {
-        TransactionWithDonation.getAll()
-            .then((donations) => {
-                setDonations(donations);
+        setLoading(true);
+        getAllPaginated(rowsPerPage, initialPage * rowsPerPage)
+            .then((res) => {
+                setDonations(res.data);
+                setHasNext(res.hasNext);
                 setPages(Math.ceil(donations.length / rowsPerPage));
+                setLoading(false);
             })
             .catch((err) => {
                 console.error(err);
+                setLoading(false);
             });
     }, []);
+
+    const handleNext = () => {
+        setPage(page + 1);
+
+        getAllPaginated(rowsPerPage, page * rowsPerPage).then((res) => {
+            setDonations([...donations, ...res.data]);
+            setHasNext(res.hasNext);
+            setPages(Math.ceil(donations.length / rowsPerPage));
+            setLoading(false);
+        });
+    };
 
     return (
         <NextUIProvider>
             <Table
                 aria-label="donations table"
-                bottomContent={
-                    <Pagination
-                        isCompact
-                        showControls
-                        showShadow
+                topContent={
+                    <Button
                         color="primary"
-                        page={page}
-                        total={pages}
-                        onChange={setPage}
-                    />
+                        onClick={handleNext}
+                        isDisabled={!hasNext}
+                    >
+                        Next
+                    </Button>
                 }
+                bottomContent={<>{page}</>}
             >
                 <TableHeader columns={columns}>
                     {(column) => (
@@ -66,7 +84,12 @@ export default function DonationsTable() {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody items={items} emptyContent={"No rows to display."}>
+                <TableBody
+                    items={items}
+                    emptyContent={loading ? "" : "No donations found"}
+                    isLoading={loading}
+                    loadingContent={"Loading..."}
+                >
                     {(item) => (
                         <TableRow key={item.id} className="text-black">
                             <TableCell>
@@ -86,3 +109,6 @@ export default function DonationsTable() {
         </NextUIProvider>
     );
 }
+// function getAllPaginated(rowsPerPage: number, arg1: number) {
+//     throw new Error("Function not implemented.");
+// }

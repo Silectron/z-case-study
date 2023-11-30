@@ -14,6 +14,40 @@ export class Donation {
     ) {}
 }
 
+interface PaginatedResponse {
+    data: TransactionWithDonation[];
+    hasNext: boolean;
+}
+
+export async function getAllPaginated(
+    limit: number,
+    offset: number
+): Promise<PaginatedResponse> {
+    const headers: Headers = new Headers();
+    headers.set("Content-Type", "application/json");
+    headers.set("Accept", "application/json");
+
+    const request: Request = new Request(
+        BasePathV1 + "/donations?limit=" + limit + "&offset=" + offset,
+        {
+            method: "GET",
+            headers,
+        }
+    );
+
+    const response = await fetch(request);
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+
+    const json = await response.json();
+    if (json.errors) {
+        throw new Error(json.errors[0].message);
+    }
+
+    return json;
+}
+
 // TransactionWithDonation class est utilisé comme modèle et pour récupérer les donations
 export class TransactionWithDonation {
     constructor(
@@ -33,6 +67,35 @@ export class TransactionWithDonation {
             method: "GET",
             headers,
         });
+
+        const response = await fetch(request);
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+
+        const json = await response.json();
+        if (json.errors) {
+            throw new Error(json.errors[0].message);
+        }
+
+        return json;
+    }
+
+    static async getAllPaginated(
+        limit: number,
+        offset: number
+    ): Promise<TransactionWithDonation[]> {
+        const headers: Headers = new Headers();
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "application/json");
+
+        const request: Request = new Request(
+            BasePathV1 + "/donations?limit=" + limit + "&offset=" + offset,
+            {
+                method: "GET",
+                headers,
+            }
+        );
 
         const response = await fetch(request);
         if (!response.ok) {

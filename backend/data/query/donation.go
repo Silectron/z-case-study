@@ -5,6 +5,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
+	"zbackend/api"
 	"zbackend/data/models"
 )
 
@@ -33,13 +35,16 @@ func GetDonations() ([]models.TransactionWithDonationObject, error) {
 	return parseDonations(bytes)
 }
 
-func GetDonationsPaginated(limit int, offset int) []models.TransactionWithDonationObject {
+func GetDonationsPaginated(limit int, offset int) api.PaginatedResponse {
 	donations, err := GetDonations()
 	if err != nil {
 		log.Fatal(err)
 	}
+	var res api.PaginatedResponse
+	res.Data = sliceDonationsPaginated(donations, limit, offset)
+	res.HasNext = len(donations) > offset+limit
 
-	return sliceDonationsPaginated(donations, limit, offset)
+	return res
 }
 
 func parseDonations(bytes []byte) ([]models.TransactionWithDonationObject, error) {
@@ -48,7 +53,19 @@ func parseDonations(bytes []byte) ([]models.TransactionWithDonationObject, error
 		return nil, err
 	}
 
+	// sort donations by date
+	donations = sortDonationsByDate(donations)
+
 	return donations, nil
+}
+
+func sortDonationsByDate(donations []models.TransactionWithDonationObject) []models.TransactionWithDonationObject {
+	// sort donations by date
+	sorter := func(i, j int) bool {
+		return donations[i].Donation.CreatedAtUtc > donations[j].Donation.CreatedAtUtc
+	}
+	sort.Slice(donations, sorter)
+	return donations
 }
 
 func sliceDonationsPaginated(donations []models.TransactionWithDonationObject, limit int, offset int) []models.TransactionWithDonationObject {
